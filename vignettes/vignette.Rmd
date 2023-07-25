@@ -698,7 +698,7 @@ names(grid.cols) <- unique(screp_example$seurat_clusters)
 chordDiagram(circles, self.link = 1, grid.col = grid.cols)
 ```
 
-This can also be used if we wanted to explore just the tumor-specific T cells by just subsetting the single-cell object.
+This can also be used if we wanted to explore just the tumor-specific T cells by just sub-setting the single-cell object.
 
 ```{r}
 subset <- subset(screp_example, Type == "T")

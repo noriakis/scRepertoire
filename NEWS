@@ -1,5 +1,9 @@
 CHANGES IN VERSION 1.11.0
 ------------------------
+* Updated clusterTCR() to function with single-cell objects
+
+CHANGES IN VERSION 1.10.1
+------------------------
 * Rebasing for the purposes of bioconductor version
 
 CHANGES IN VERSION 1.7.5

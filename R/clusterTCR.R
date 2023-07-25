@@ -47,6 +47,8 @@ clusterTCR <- function(df,
       dat[[y]]$cdr3_aa2 <- str_split(dat[[y]]$CTaa, "_", simplify = TRUE)[,2]
       dat[[y]]$cdr3_nt1 <- str_split(dat[[y]]$CTnt, "_", simplify = TRUE)[,1]
       dat[[y]]$cdr3_nt2 <- str_split(dat[[y]]$CTnt, "_", simplify = TRUE)[,2]
+      dat[[y]]$TCR1 <- str_split(dat[[y]]$CTgene, "_", simplify = TRUE)[,1]
+      dat[[y]]$TCR2 <- str_split(dat[[y]]$CTgene, "_", simplify = TRUE)[,2]
     }
   }
   dat <- checkList(dat)
