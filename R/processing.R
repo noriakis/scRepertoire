@@ -1,24 +1,3 @@
-#' Removing any additional prefixes to the barcodes of filtered contigs.
-#'
-#' @param contigs The raw loaded filtered_contig_annotation.csv
-#' @param column The column in which the barcodes are listed
-#' @param connector The type of character in which is attaching the defualt 
-#' barcode with any other characters
-#' @param num_connects The number of strings combined with the connectors
-#' @examples 
-#' stripBarcode(contig_list[[1]], column = 1, connector = "_", num_connects = 1)
-#' @export
-#' @return list with the suffixes of the barcodes removed.
-stripBarcode <- function(contigs, column = 1, connector = "_", 
-                            num_connects = 3) {
-    count <- as.data.frame(t(data.frame(strsplit(contigs[,column], 
-                            paste("['", connector, "']", sep="")), 
-                            stringsAsFactors = FALSE)), 
-                            stringsAsFactors = FALSE)[num_connects]
-    contigs[,column] <- count
-    return(contigs)
-}
-
 #' Adding variables after the combination of contigs.
 #'
 #' This function adds variables to the product of combineTCR() combineBCR() or 

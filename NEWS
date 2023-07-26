@@ -1,6 +1,7 @@
 CHANGES IN VERSION 1.11.0
 ------------------------
 * Updated clusterTCR() to function with single-cell objects
+* remove stripBarcode() function
 
 CHANGES IN VERSION 1.10.1
 ------------------------

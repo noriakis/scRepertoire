@@ -65,29 +65,6 @@ data("contig_list") #the data built into scRepertoire
 head(contig_list[[1]])
 ```
 
-Some workflows will have the additional labeling of the standard barcode. Before we proceed, we can use the function `stripBarcode()` in order to avoid any labeling issues down the line. Importantly, `stripBarcode()` is for *removing prefixes* on barcodes that have resulted from other pipelines. 
-
-**No need for stripBarcode function**, if the barcodes look like:  
-* AAACGGGAGATGGCGT-1  
-* AAACGGGAGATGGCGT  
-
-In terms of using `stripBarcode()`, please think about the following parameters. 
-
-**column**  
-* The column in which the barcodes are present  
-
-**connector**  
-* The character that is connecting the barcode with the prefix  
-
-**num_connects**  
-* The levels of barcode prefix, where *X_X_AAACGGGAGATGGCGT-1* == 3, *X_AAACGGGAGATGGCGT-1* = 2.  
-
-```{r eval=FALSE}
-for (i in seq_along(contig_list)) {
-    contig_list[[i]] <- stripBarcode(contig_list[[i]], column = 1, connector = "_", num_connects = 3)
-}
-```
-
 ## Loading from other pipelines
 
 New to this version of the package is support for BD Rhapsody, AIRR, [WAT3R](https://www.biorxiv.org/content/10.1101/2022.01.26.477886v1), and [TRUST4](https://www.nature.com/articles/s41592-021-01142-2) single-cell outputs. By indicating the directory of the outputs from these pipelines are located, ```loadContigs()``` will generate a contig list that is compatible with the rest of scRepertoire. Alternatively, ```loadContigs()``` will also accept a list of data frames that you have loaded individualy. In addition, although not necessary, ```loadContigs()``` can be used for 10X filtered_contig_annotation.csv files. 
