@@ -13,9 +13,12 @@ vizGenes(
   order = "gene",
   scale = TRUE,
   group.by = NULL,
+  pcoa.group.by = NULL,
   split.by = NULL,
   exportTable = FALSE,
-  palette = "inferno"
+  palette = "inferno",
+  dist.method = "manhattan",
+  point.size = 3
 )
 }
 \arguments{
@@ -27,7 +30,7 @@ vizGenes(
 \item{chain}{indicate the specific chain should be used - 
 e.g. "TRA", "TRG", "IGH", "IGL" (no both option here)}
 
-\item{plot}{The type of plot to return - heatmap or bar}
+\item{plot}{The type of plot to return - heatmap, bar or pcoa}
 
 \item{y.axis}{Variable to separate the y-axis, can be both categorical or other gene 
 gene segments such as V, D, J, or C.}
@@ -39,12 +42,18 @@ respective repertoire size}
 
 \item{group.by}{The column header used for grouping.}
 
+\item{pcoa.group.by}{The column header used for grouping in PCoA.}
+
 \item{split.by}{If using a single-cell object, the column header 
 to group the new list. NULL will return clusters.}
 
 \item{exportTable}{Returns the data frame used for forming the graph.}
 
 \item{palette}{Colors to use in visualization - input any hcl.pals()}
+
+\item{dist.method}{distance method when using `pcoa`, default to 'manhattan'}
+
+\item{point.size}{point size for pcoa}
 }
 \value{
 ggplot bar diagram or heatmap of gene usage

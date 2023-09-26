@@ -115,7 +115,7 @@ clonalOverlap <- function(df,
             `colnames<-`(c("PC1","PC2")) %>%
             mutate(sample=row.names(.)) %>%
             mutate(group=group[sample]) %>%
-            ggplot(aes(x=PC1, y=PC2, fill=group))+
+            ggplot(aes(x=.data$PC1, y=.data$PC2, fill=group))+
             geom_point(shape=21, size=point.size) +
             scale_fill_manual(values=.colorizer(palette, group_len),
                 na.value = "white",

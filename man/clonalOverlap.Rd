@@ -11,7 +11,10 @@ clonalOverlap(
   chain = "both",
   split.by = NULL,
   exportTable = FALSE,
-  palette = "inferno"
+  palette = "inferno",
+  pcoa = FALSE,
+  group.by = NULL,
+  point.size = 3
 )
 }
 \arguments{
@@ -34,6 +37,12 @@ to group the new list. NULL will return clusters.}
 \item{exportTable}{Returns the data frame used for forming the graph}
 
 \item{palette}{Colors to use in visualization - input any hcl.pals()}
+
+\item{pcoa}{Plot PCoA plot instead of heatmap}
+
+\item{group.by}{grouping variable in PCoA plot, default to NULL}
+
+\item{point.size}{point size in PCoA plot}
 }
 \value{
 ggplot of the clonotypic overlap between elements of a list

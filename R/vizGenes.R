@@ -35,7 +35,7 @@
 #' @param point.size point size for pcoa
 #' @import ggplot2
 #' @importFrom stringr str_split
-#' @importFrom stats sd
+#' @importFrom stats sd dist
 #' @importFrom dplyr bind_rows
 #' @export
 #' @return ggplot bar diagram or heatmap of gene usage
@@ -148,7 +148,7 @@ vizGenes <- function(df,
   } else if (plot == "pcoa") {    
     #Var2 should be sample (y.axis="sample")
     mat <- df %>% tidyr::pivot_wider(id_cols=Var2, names_from=Var1,
-        values_from=varcount) %>% data.frame()
+        values_from=.data$varcount) %>% data.frame()
     row.names(mat) <- mat[,1]
     mat[,1] <- NULL
     dist_mat <- dist(mat,method=dist.method, upper=TRUE, diag=TRUE)
@@ -165,7 +165,7 @@ vizGenes <- function(df,
         `colnames<-`(c("PC1","PC2")) %>%
         mutate(sample=row.names(.)) %>%
         mutate(group=group[sample]) %>%
-        ggplot(aes(x=PC1, y=PC2, fill=group))+
+        ggplot(aes(x=.data$PC1, y=.data$PC2, fill=group))+
         geom_point(shape=21, size=point.size) +
         scale_fill_manual(values=.colorizer(palette, group_len),
             na.value = "white",
