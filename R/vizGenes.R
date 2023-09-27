@@ -26,11 +26,11 @@
 #' @param scale Converts the individual count of genes to proportion using the total 
 #' respective repertoire size 
 #' @param group.by The column header used for grouping.
-#' @param pcoa.group.by The column header used for grouping in PCoA.
 #' @param split.by If using a single-cell object, the column header 
 #' to group the new list. NULL will return clusters.
 #' @param exportTable Returns the data frame used for forming the graph.
 #' @param palette Colors to use in visualization - input any hcl.pals()
+#' @param pcoa.group.by The column header used for grouping in PCoA.
 #' @param dist.method distance method when using `pcoa`, default to 'manhattan'
 #' @param point.size point size for pcoa
 #' @import ggplot2
@@ -58,18 +58,10 @@ vizGenes <- function(df,
   df <- list.input.return(df, split.by = split.by)
   if (plot == "pcoa") {y.axis="sample"}
   if (!is.null(pcoa.group.by)) {
-    group <- vector(mode="character", length=length(df))
-    for (i in seq_along(df)) {
-        if (!pcoa.group.by %in% colnames(df[[i]])) {
-            stop("Could not find `pcoa.group.by` column.")
-        }
-        group[i] <- unique(df[[i]][, pcoa.group.by])
-    }
+  	group <- unlist(lapply(df, function(x) unique(x[[pcoa.group.by]])))
     names(group) <- lapply(df, function(x) unique(x$sample)) %>% unlist()
-    group_len <- length(unique(group))
   } else {
     group <- NULL
-    group_len <- 0
   }
   if(!is.null(group.by)) {
     df <- groupList(df, group.by)
@@ -145,34 +137,17 @@ vizGenes <- function(df,
             axis.title.y = element_blank(), 
             axis.text.y = element_text(size=rel(0.5))) + 
       scale_fill_gradientn(colors = rev(.colorizer(palette,5)))
-  } else if (plot == "pcoa") {    
-    #Var2 should be sample (y.axis="sample")
-    mat <- df %>% tidyr::pivot_wider(id_cols=Var2, names_from=Var1,
-        values_from=.data$varcount) %>% data.frame()
-    row.names(mat) <- mat[,1]
-    mat[,1] <- NULL
-    dist_mat <- dist(mat,method=dist.method, upper=TRUE, diag=TRUE)
+  } else if (plot == "pcoa") {
+  	#Var2 should be sample (y.axis="sample")
+  	mat <- df %>% tidyr::pivot_wider(id_cols=Var2, names_from=Var1,
+  		values_from=varcount) %>% data.frame()
+	row.names(mat) <- mat[,1]
+	mat[,1] <- NULL
+	dist_mat <- dist(mat,method=dist.method, upper=TRUE, diag=TRUE)
 
-    res_pcoa <- ape::pcoa(dist_mat, correction="lingoes")
-    if ("Rel_corr_eig" %in% colnames(res_pcoa$values)) {
-        expv <- round(res_pcoa$values[,"Rel_corr_eig"] * 100, 2)        
-    } else {
-        expv <- round(res_pcoa$values[,"Relative_eig"] * 100, 2)
-    }
-    plot <- res_pcoa$vectors %>%
-        data.frame() %>%
-        .[,c(1,2)] %>%
-        `colnames<-`(c("PC1","PC2")) %>%
-        mutate(sample=row.names(.)) %>%
-        mutate(group=group[sample]) %>%
-        ggplot(aes(x=.data$PC1, y=.data$PC2, fill=group))+
-        geom_point(shape=21, size=point.size) +
-        scale_fill_manual(values=.colorizer(palette, group_len),
-            na.value = "white",
-            name=group.by)+
-        xlab(paste0("PC1 (",expv[1]," %)"))+
-        ylab(paste0("PC2 (",expv[2]," %)"))+
-        theme_classic()
+	res_pcoa <- ape::pcoa(dist_mat, correction="lingoes")
+	plot <- return_pcoa(res_pcoa, group=group, palette=palette,
+	    point.size=point.size, pcoa.group.by=pcoa.group.by)
   }
   if (exportTable == TRUE) { return(df) }
   return(plot)

@@ -13,7 +13,7 @@ clonalOverlap(
   exportTable = FALSE,
   palette = "inferno",
   pcoa = FALSE,
-  group.by = NULL,
+  pcoa.group.by = NULL,
   point.size = 3
 )
 }
@@ -40,7 +40,7 @@ to group the new list. NULL will return clusters.}
 
 \item{pcoa}{Plot PCoA plot instead of heatmap}
 
-\item{group.by}{grouping variable in PCoA plot, default to NULL}
+\item{pcoa.group.by}{grouping variable in PCoA plot, default to NULL}
 
 \item{point.size}{point size in PCoA plot}
 }

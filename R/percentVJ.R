@@ -29,9 +29,18 @@ percentVJ <- function(df,
                          group.by = NULL, 
                          split.by = NULL,
                          exportTable = FALSE, 
-                         palette = "inferno") {
-  cloneCall <- theCall(cloneCall)
-  df <- .data.wrangle(df, split.by, cloneCall, chain)
+                         palette = "inferno",
+                         pcoa.group.by = NULL,
+                         pcoa = FALSE,
+                         dist.method = "manhattan",
+                         point.size = 3) {
+  if (!is.null(pcoa.group.by)) {
+  	group <- unlist(lapply(df, function(x) unique(x[[pcoa.group.by]])))
+  } else {
+  	group <- NULL
+  }  
+  
+  df <- .data.wrangle(df, split.by, "CTgene", chain)
   
   if(chain %in% c("TRA", "TRG", "IGL")) {
     positions <- c(1,2)
@@ -66,6 +75,14 @@ percentVJ <- function(df,
   if (exportTable == TRUE) { 
     summary.matrix <- do.call(rbind,summary)
     return(summary.matrix) 
+  }
+  if (pcoa) {
+	summary.matrix <- do.call(rbind,summary)
+    distMat <- dist(summary.matrix, method=dist.method, upper=TRUE, diag=TRUE)
+  	res_pcoa <- ape::pcoa(distMat, correction="lingoes")
+	plot <- return_pcoa(res_pcoa, group=group, palette=palette,
+	    point.size=point.size, pcoa.group.by=pcoa.group.by)
+	return(plot)
   }
   mat <- lapply(summary, function(x) {
     # Create an empty matrix

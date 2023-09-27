@@ -28,7 +28,7 @@
 #' @param exportTable Returns the data frame used for forming the graph
 #' @param palette Colors to use in visualization - input any hcl.pals()
 #' @param pcoa Plot PCoA plot instead of heatmap
-#' @param group.by grouping variable in PCoA plot, default to NULL
+#' @param pcoa.group.by grouping variable in PCoA plot, default to NULL
 #' @param point.size point size in PCoA plot
 #' @importFrom stringr str_sort str_to_title
 #' @importFrom reshape2 melt
@@ -44,22 +44,17 @@ clonalOverlap <- function(df,
                           exportTable = FALSE,
                           palette = "inferno",
                           pcoa = FALSE,
-                          group.by = NULL,
+                          pcoa.group.by = NULL,
                           point.size = 3) {
     if(method == "morisita") {
       return_type = "freq"
     } else {
       return_type = "unique"
     }
-    if (!is.null(group.by)) {
-        group <- vector(mode="character", length=length(df))
-        for (i in seq_along(df)) {
-            group[i] <- unique(df[[i]][, group.by])
-        }
-        names(group) <- names(df)
-        group_len <- length(unique(group))
+    if (!is.null(pcoa.group.by)) {
+    	group <- unlist(lapply(df, function(x) unique(x[[pcoa.group.by]])))
     } else {
-        group <- NULL; group_len <- 0;
+    	group <- NULL
     }
     cloneCall <- theCall(cloneCall)
     df <- .data.wrangle(df, split.by, cloneCall, chain)
@@ -97,32 +92,15 @@ clonalOverlap <- function(df,
       return(coef_matrix) 
     }
     if (pcoa) {
-        m <- as.matrix(coef_matrix)
-        m[lower.tri(m)] <- t(m)[lower.tri(m)]
-        m <- as.dist(1-m, upper=TRUE)
-        # res_pcoa <- cmdscale(as.dist(1-m, upper=TRUE), k=2, eig=TRUE)
+    	m <- as.matrix(coef_matrix)
+    	m[lower.tri(m)] <- t(m)[lower.tri(m)]
+    	m <- as.dist(1-m, upper=TRUE)
+    	# res_pcoa <- cmdscale(as.dist(1-m, upper=TRUE), k=2, eig=TRUE)
         # eig_sum <- sum(res_pcoa$eig)
         # expv <- ((res_pcoa$eig / eig_sum) %>% round(2)) * 100
-        res_pcoa <- ape::pcoa(m, correction="lingoes")
-        if ("Rel_corr_eig" %in% colnames(res_pcoa$values)) {
-            expv <- round(res_pcoa$values[,"Rel_corr_eig"] * 100, 2)        
-        } else {
-            expv <- round(res_pcoa$values[,"Relative_eig"] * 100, 2)
-        }
-        plot <- res_pcoa$vectors %>%
-            data.frame() %>%
-            .[,c(1,2)] %>%
-            `colnames<-`(c("PC1","PC2")) %>%
-            mutate(sample=row.names(.)) %>%
-            mutate(group=group[sample]) %>%
-            ggplot(aes(x=.data$PC1, y=.data$PC2, fill=group))+
-            geom_point(shape=21, size=point.size) +
-            scale_fill_manual(values=.colorizer(palette, group_len),
-                na.value = "white",
-                name=group.by)+
-            xlab(paste0("PC1 (",expv[1]," %)"))+
-            ylab(paste0("PC2 (",expv[2]," %)"))+
-            theme_classic()
+    	res_pcoa <- ape::pcoa(m, correction="lingoes")
+    	plot <- return_pcoa(res_pcoa, group=group, palette=palette,
+    		point.size=point.size, pcoa.group.by=pcoa.group.by)
         return(plot)
     }
     mat_melt <- suppressMessages(melt(as.matrix(coef_matrix)))

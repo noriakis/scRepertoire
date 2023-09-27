@@ -10,7 +10,11 @@ percentVJ(
   group.by = NULL,
   split.by = NULL,
   exportTable = FALSE,
-  palette = "inferno"
+  palette = "inferno",
+  pcoa.group.by = NULL,
+  pcoa = FALSE,
+  dist.method = "manhattan",
+  point.size = 3
 )
 }
 \arguments{
