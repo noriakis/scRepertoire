@@ -29,6 +29,9 @@
 #' respective repertoire size 
 #' @param exportTable Returns the data frame used for forming the graph.
 #' @param palette Colors to use in visualization - input any \link[grDevices]{hcl.pals}.
+#' @param pcoa.group.by grouping variable in PCoA plot, default to NULL.
+#' @param dist.method distance calculation method to use in dist().
+#' @param point.size point size in PCoA plot.
 #' @import ggplot2
 #' @importFrom stringr str_split
 #' @importFrom stats sd
@@ -45,10 +48,13 @@ vizGenes <- function(input.data,
                      order = "gene",
                      scale = TRUE, 
                      exportTable = FALSE,
-                     palette = "inferno") {
+                     palette = "inferno",
+                     pcoa.group.by = NULL,
+                     dist.method = "manhattan",
+                     point.size = 3) {
   element.names <- NULL
   sco <- is_seurat_object(input.data) | is_se_object(input.data)
-  
+
   #Extracting group.by in case of null
   if(!grepl("TRA|TRB|TRG|TRD|IGH|IGL|IGK", y.axis) && !is.null(y.axis)) {
     group.by <- y.axis
@@ -62,8 +68,9 @@ vizGenes <- function(input.data,
   if(!is.null(group.by) & !sco) {
     input.data <- .groupList(input.data, group.by)
   }
-  
+
   input.data <- .bound.input.return(input.data)
+
   #Parsing x.axis if gene used
   if (x.axis %!in% colnames(input.data)) {
     if (grepl("TRA|TRB|TRG|TRD|IGH|IGL|IGK", x.axis)) {
@@ -142,7 +149,6 @@ vizGenes <- function(input.data,
         as.data.frame() 
   }
   
-  
   if (order == "variance") {
     varOrder <- unique(mat[order(mat$varcount, decreasing = TRUE),"x.axis"])
   } else {
@@ -175,6 +181,24 @@ vizGenes <- function(input.data,
             axis.title.y = element_blank(), 
             axis.text.y = element_text(size=rel(0.5))) + 
       scale_fill_gradientn(colors = .colorizer(palette,5))
+  } else if (plot == "pcoa") {
+    if (!is.null(pcoa.group.by)) {
+        pcgr <- input.data[,c(pcoa.group.by,"element.names")]
+        pcgr <- pcgr[!duplicated(pcgr),]
+        group <- pcgr[[pcoa.group.by]] |> setNames(pcgr$element.names)
+    } else {
+        group <- NULL
+    }
+    y.axis <- "sample"
+    mat <- mat %>% tidyr::pivot_wider(id_cols=x.axis, names_from=y.axis,
+        values_from=varcount) %>% data.frame(check.names=FALSE) %>% na.omit()
+    row.names(mat) <- mat[,1]
+    mat[,1] <- NULL
+    dist_mat <- dist(t(mat), method=dist.method, upper=TRUE, diag=TRUE)
+    res_pcoa <- ape::pcoa(dist_mat, correction="lingoes")
+    plot <- .returnPcoa(res_pcoa, group=group, palette=palette,
+        point.size=point.size, pcoa.group.by=pcoa.group.by)
+
   }
   if (exportTable == TRUE) { 
     return(mat) 
