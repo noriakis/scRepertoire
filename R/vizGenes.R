@@ -194,6 +194,7 @@ vizGenes <- function(input.data,
         values_from=varcount) %>% data.frame(check.names=FALSE) %>% na.omit()
     row.names(mat) <- mat[,1]
     mat[,1] <- NULL
+    if (dim(mat)[1]==1) {stop("Could not calculate distance.")}
     dist_mat <- dist(t(mat), method=dist.method, upper=TRUE, diag=TRUE)
     res_pcoa <- ape::pcoa(dist_mat, correction="lingoes")
     plot <- .returnPcoa(res_pcoa, group=group, palette=palette,
