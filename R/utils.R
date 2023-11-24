@@ -590,7 +590,7 @@ is_df_or_list_of_df <- function(x) {
         `colnames<-`(c("PC1","PC2")) %>%
         mutate(sample=row.names(.)) %>%
         mutate(group=group[sample]) %>%
-        ggplot(aes(x=PC1, y=PC2, fill=group))+
+        ggplot(aes(x=.data$PC1, y=.data$PC2, fill=group))+
         geom_point(shape=21, size=point.size)
     if (ellipse) {
         plot <- plot +

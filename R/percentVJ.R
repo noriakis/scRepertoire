@@ -23,6 +23,7 @@
 #' @import ggplot2
 #' @importFrom stringr str_split str_sort 
 #' @importFrom reshape2 melt
+#' @importFrom stats dist
 #' @export
 #' @concept Summarize_Repertoire
 #' @return ggplot of percentage of V and J gene pairings as a heatmap

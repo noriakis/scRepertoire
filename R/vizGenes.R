@@ -36,6 +36,7 @@
 #' @importFrom stringr str_split
 #' @importFrom stats sd
 #' @importFrom dplyr bind_rows
+#' @importFrom tidyr pivot_wider
 #' @export
 #' @concept Visualizing_Clones
 #' @return ggplot bar diagram or heatmap of gene usage
@@ -190,8 +191,8 @@ vizGenes <- function(input.data,
         group <- NULL
     }
     y.axis <- "sample"
-    mat <- mat %>% tidyr::pivot_wider(id_cols=x.axis, names_from=y.axis,
-        values_from=varcount) %>% data.frame(check.names=FALSE) %>% na.omit()
+    mat <- mat %>% pivot_wider(id_cols=x.axis, names_from=y.axis,
+        values_from=.data$varcount) %>% data.frame(check.names=FALSE) %>% na.omit()
     row.names(mat) <- mat[,1]
     mat[,1] <- NULL
     if (dim(mat)[1]==1) {stop("Could not calculate distance.")}

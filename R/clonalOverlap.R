@@ -54,6 +54,7 @@
 #' @importFrom stringr str_sort str_to_title
 #' @importFrom reshape2 melt
 #' @importFrom stats quantile
+#' @importFrom ape pcoa
 #' @export
 #' @concept Visualizing_Clones
 #' @return ggplot of the overlap of clones by group
