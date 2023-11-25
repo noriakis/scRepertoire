@@ -186,7 +186,8 @@ vizGenes <- function(input.data,
     if (!is.null(pcoa.group.by)) {
         pcgr <- input.data[,c(pcoa.group.by,"element.names")]
         pcgr <- pcgr[!duplicated(pcgr),]
-        group <- pcgr[[pcoa.group.by]] |> setNames(pcgr$element.names)
+        group <- pcgr[[pcoa.group.by]]
+        group <- setNames(group, pcgr$element.names)
     } else {
         group <- NULL
     }
